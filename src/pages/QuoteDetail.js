@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { useParams, Route, Link } from "react-router-dom";
+import { useParams, Route, Link, useRouteMatch } from "react-router-dom";
 
 import HighlightedQuote from "../components/quotes/HighlightedQuote";
 import Comments from "../components/comments/Comments";
@@ -11,6 +11,7 @@ const DUMMY_QUOTES = [
 
 const QuoteDetail = () => {
   const params = useParams();
+  const match = useRouteMatch();
 
   // finding the exact quote detail that matches the URL
   const quote = DUMMY_QUOTES.find((quote) => quote.id === params.quoteId);
@@ -22,15 +23,17 @@ const QuoteDetail = () => {
   return (
     <Fragment>
       <HighlightedQuote text={quote.text} author={quote.author} />
-      <Route path={`/quotes/${params.quoteId}`} exact>
+      {/* match.path is used to match the route path defined in App.js for the current page we're on */}
+      <Route path={match.path} exact>
         <div className="centered">
-          <Link className="btn--flat" to={`/quotes/${params.quoteId}/comments`}>
+          {/* match.url uses the fact that we already are on a part of this page we wanna link to*/}
+          <Link className="btn--flat" to={`${match.url}/comments`}>
             Load Comments
           </Link>
         </div>
       </Route>
       {/* used dynamic routing as it depends on "quoteId" for which this quote detail component was loaded*/}
-      <Route path={`/quotes/${params.quoteId}/comments`}>
+      <Route path={`${match.path}/comments`}>
         <Comments />
       </Route>
     </Fragment>
